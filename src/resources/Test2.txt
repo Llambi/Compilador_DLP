@@ -1,0 +1,78 @@
+/*
+Test 2 para probar la Fase de Generación de Código
+
+COMPROBACION: Si cuando pida un valor se introduce un 2 debería salir: 
+C
+1200
+A
+1000
+B
+1100
+C
+1200
+D
+1300
+
+CONSEJO: No limitarse a comprobar el resultado de la ejecución. Se recomienda además abrir el fichero generado usando el depurador GVM y comprobar sus instrucciones.
+
+Para facilitar esta tarea es de gran utilidad que el alumno haya generado directivas '#line' en el fichero de salida.
+Para información sobre la función de dicha directiva se debe abrir con GVM el siguiente tutorial: 
+Tutorial\3 Uso básico del depurador\4 Fusión Alto Nivel.txt
+
+NOTA: Es posible que el alumno deba adaptar ligeramente la sintaxis del lenguaje si no coincide
+con la del lenguaje que le corresponde.
+*/
+
+struct Persona {
+	inicial:char;
+	sueldo:float;  
+};
+
+var empresa:[4] Persona;
+
+inicia() {
+	var i:int;
+
+	i = 0;
+	while (i < 4) {
+		empresa[i].inicial = cast<char>(i + cast<int>('A'));
+		empresa[i].sueldo = cast<float>(1000 + (i * 100));
+		i = i + 1;
+	}  
+}
+
+busca(i:int) {
+	if (i < 0 || i >= 4) {
+		return;
+	}
+	print empresa[i].inicial;
+	print empresa[i].sueldo;
+}
+
+imprime():int {
+	var i:int;
+	var aux:Persona;
+
+	i = 0;
+	while (! (i >= 4)) {
+		aux.inicial = empresa[i].inicial;
+		aux.sueldo = empresa[i].sueldo;
+		
+		print aux.inicial;
+		print aux.sueldo;
+		
+		i = i + 1;
+	}  
+	return i;
+}
+
+main() {
+	var posicion:int;
+
+	inicia();
+
+	read posicion;
+	busca(posicion);
+
+	imprime();	// No se recoge el valor de retorno
+}

@@ -1,0 +1,27 @@
+/*
+Este ejemplo tiene varios errores semánticos que el compilador debe detectar en la
+fase de identificación y otros que no deben ser detectados aún.
+
+NOTA: Es posible que el alumno deba adaptar ligeramente la sintaxis del lenguaje si no coincide
+con la del lenguaje que le corresponde.
+*/
+
+
+// ------------- 
+dobleSuma() {
+}
+
+prueba() {
+}
+
+main() {
+	print f();	// Función no definida 
+	g(2);		// Procedimiento no definido 
+	
+	dobleSuma();
+	dobleSuma(5.6);	// No error en esta fase aunque no coincidan parámetros 
+}
+
+dobleSuma() {	// Función repetida 
+
+}

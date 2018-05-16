@@ -1,0 +1,2572 @@
+   0  $accept : programa $end
+
+   1  programa : listaDefinicion
+
+   2  listaDefinicion :
+   3                  | listaDefinicion definicion
+
+   4  definicion : definicionVariable
+   5             | definicionStruct
+   6             | definicionFuncion
+
+   7  definicionVariables : listaDefinicionVariables
+   8                      |
+
+   9  listaDefinicionVariables : definicionVariable
+  10                           | listaDefinicionVariables definicionVariable
+
+  11  definicionVariable : VAR ID ':' tipo ';'
+
+  12  tipo : ID
+  13       | REAL
+  14       | INT
+  15       | CHAR
+  16       | '[' LITENT ']' tipo
+
+  17  tipoRetorno : ':' tipo
+  18              |
+
+  19  definicionStruct : STRUCT ID '{' listaCamposStruct '}' ';'
+
+  20  listaCamposStruct : camposStruct
+  21                    | listaCamposStruct camposStruct
+
+  22  camposStruct : ID ':' tipo ';'
+
+  23  definicionFuncion : ID '(' parametros ')' tipoRetorno '{' definicionVariables listaSentencia '}'
+
+  24  parametros :
+  25             | listaParametro
+
+  26  listaParametro : parametro
+  27                 | listaParametro ',' parametro
+
+  28  parametro : ID ':' tipo
+
+  29  listaSentencia :
+  30                 | listaSentencia sentencia
+
+  31  sentencia : exp '=' exp ';'
+  32            | ID '(' argumentos ')' ';'
+  33            | READ exp ';'
+  34            | PRINT exp ';'
+  35            | PRINTSP exp ';'
+  36            | PRINTLN exp ';'
+  37            | RETURN exp ';'
+  38            | RETURN ';'
+  39            | WHILE '(' exp ')' '{' listaSentencia '}'
+  40            | IF '(' exp ')' '{' listaSentencia '}'
+  41            | IF '(' exp ')' '{' listaSentencia '}' ELSE '{' listaSentencia '}'
+
+  42  argumentos : listaExp
+  43             |
+
+  44  listaExp : listaExp ',' exp
+  45           | exp
+
+  46  exp : '(' exp ')'
+  47      | CAST '<' tipo '>' '(' exp ')'
+  48      | LITCHAR
+  49      | LITENT
+  50      | LITREAL
+  51      | '-' exp
+  52      | exp '+' exp
+  53      | exp '-' exp
+  54      | exp '*' exp
+  55      | exp '/' exp
+  56      | exp '%' exp
+  57      | ID
+  58      | exp '.' ID
+  59      | exp '[' exp ']'
+  60      | ID '(' argumentos ')'
+  61      | exp '<' exp
+  62      | exp '>' exp
+  63      | exp MENORIGUAL exp
+  64      | exp MAYORIGUAL exp
+  65      | exp DESIGUALDAD exp
+  66      | exp IGUALDAD exp
+  67      | '!' exp
+  68      | exp AND exp
+  69      | exp OR exp
+
+state 0
+	$accept : . programa $end  (0)
+	listaDefinicion : .  (2)
+
+	.  reduce 2
+
+	programa  goto 1
+	listaDefinicion  goto 2
+
+
+state 1
+	$accept : programa . $end  (0)
+
+	$end  accept
+
+
+state 2
+	programa : listaDefinicion .  (1)
+	listaDefinicion : listaDefinicion . definicion  (3)
+
+	ID  shift 3
+	STRUCT  shift 4
+	VAR  shift 5
+	$end  reduce 1
+
+	definicion  goto 6
+	definicionVariable  goto 7
+	definicionStruct  goto 8
+	definicionFuncion  goto 9
+
+
+state 3
+	definicionFuncion : ID . '(' parametros ')' tipoRetorno '{' definicionVariables listaSentencia '}'  (23)
+
+	'('  shift 10
+	.  error
+
+
+state 4
+	definicionStruct : STRUCT . ID '{' listaCamposStruct '}' ';'  (19)
+
+	ID  shift 11
+	.  error
+
+
+state 5
+	definicionVariable : VAR . ID ':' tipo ';'  (11)
+
+	ID  shift 12
+	.  error
+
+
+state 6
+	listaDefinicion : listaDefinicion definicion .  (3)
+
+	.  reduce 3
+
+
+state 7
+	definicion : definicionVariable .  (4)
+
+	.  reduce 4
+
+
+state 8
+	definicion : definicionStruct .  (5)
+
+	.  reduce 5
+
+
+state 9
+	definicion : definicionFuncion .  (6)
+
+	.  reduce 6
+
+
+state 10
+	definicionFuncion : ID '(' . parametros ')' tipoRetorno '{' definicionVariables listaSentencia '}'  (23)
+	parametros : .  (24)
+
+	ID  shift 13
+	')'  reduce 24
+
+	parametros  goto 14
+	listaParametro  goto 15
+	parametro  goto 16
+
+
+state 11
+	definicionStruct : STRUCT ID . '{' listaCamposStruct '}' ';'  (19)
+
+	'{'  shift 17
+	.  error
+
+
+state 12
+	definicionVariable : VAR ID . ':' tipo ';'  (11)
+
+	':'  shift 18
+	.  error
+
+
+state 13
+	parametro : ID . ':' tipo  (28)
+
+	':'  shift 19
+	.  error
+
+
+state 14
+	definicionFuncion : ID '(' parametros . ')' tipoRetorno '{' definicionVariables listaSentencia '}'  (23)
+
+	')'  shift 20
+	.  error
+
+
+state 15
+	parametros : listaParametro .  (25)
+	listaParametro : listaParametro . ',' parametro  (27)
+
+	','  shift 21
+	')'  reduce 25
+
+
+state 16
+	listaParametro : parametro .  (26)
+
+	.  reduce 26
+
+
+state 17
+	definicionStruct : STRUCT ID '{' . listaCamposStruct '}' ';'  (19)
+
+	ID  shift 22
+	.  error
+
+	listaCamposStruct  goto 23
+	camposStruct  goto 24
+
+
+state 18
+	definicionVariable : VAR ID ':' . tipo ';'  (11)
+
+	ID  shift 25
+	CHAR  shift 26
+	INT  shift 27
+	REAL  shift 28
+	'['  shift 29
+	.  error
+
+	tipo  goto 30
+
+
+state 19
+	parametro : ID ':' . tipo  (28)
+
+	ID  shift 25
+	CHAR  shift 26
+	INT  shift 27
+	REAL  shift 28
+	'['  shift 29
+	.  error
+
+	tipo  goto 31
+
+
+state 20
+	definicionFuncion : ID '(' parametros ')' . tipoRetorno '{' definicionVariables listaSentencia '}'  (23)
+	tipoRetorno : .  (18)
+
+	':'  shift 32
+	'{'  reduce 18
+
+	tipoRetorno  goto 33
+
+
+state 21
+	listaParametro : listaParametro ',' . parametro  (27)
+
+	ID  shift 13
+	.  error
+
+	parametro  goto 34
+
+
+state 22
+	camposStruct : ID . ':' tipo ';'  (22)
+
+	':'  shift 35
+	.  error
+
+
+state 23
+	definicionStruct : STRUCT ID '{' listaCamposStruct . '}' ';'  (19)
+	listaCamposStruct : listaCamposStruct . camposStruct  (21)
+
+	ID  shift 22
+	'}'  shift 36
+	.  error
+
+	camposStruct  goto 37
+
+
+state 24
+	listaCamposStruct : camposStruct .  (20)
+
+	.  reduce 20
+
+
+state 25
+	tipo : ID .  (12)
+
+	.  reduce 12
+
+
+state 26
+	tipo : CHAR .  (15)
+
+	.  reduce 15
+
+
+state 27
+	tipo : INT .  (14)
+
+	.  reduce 14
+
+
+state 28
+	tipo : REAL .  (13)
+
+	.  reduce 13
+
+
+state 29
+	tipo : '[' . LITENT ']' tipo  (16)
+
+	LITENT  shift 38
+	.  error
+
+
+state 30
+	definicionVariable : VAR ID ':' tipo . ';'  (11)
+
+	';'  shift 39
+	.  error
+
+
+state 31
+	parametro : ID ':' tipo .  (28)
+
+	.  reduce 28
+
+
+state 32
+	tipoRetorno : ':' . tipo  (17)
+
+	ID  shift 25
+	CHAR  shift 26
+	INT  shift 27
+	REAL  shift 28
+	'['  shift 29
+	.  error
+
+	tipo  goto 40
+
+
+state 33
+	definicionFuncion : ID '(' parametros ')' tipoRetorno . '{' definicionVariables listaSentencia '}'  (23)
+
+	'{'  shift 41
+	.  error
+
+
+state 34
+	listaParametro : listaParametro ',' parametro .  (27)
+
+	.  reduce 27
+
+
+state 35
+	camposStruct : ID ':' . tipo ';'  (22)
+
+	ID  shift 25
+	CHAR  shift 26
+	INT  shift 27
+	REAL  shift 28
+	'['  shift 29
+	.  error
+
+	tipo  goto 42
+
+
+state 36
+	definicionStruct : STRUCT ID '{' listaCamposStruct '}' . ';'  (19)
+
+	';'  shift 43
+	.  error
+
+
+state 37
+	listaCamposStruct : listaCamposStruct camposStruct .  (21)
+
+	.  reduce 21
+
+
+state 38
+	tipo : '[' LITENT . ']' tipo  (16)
+
+	']'  shift 44
+	.  error
+
+
+state 39
+	definicionVariable : VAR ID ':' tipo ';' .  (11)
+
+	.  reduce 11
+
+
+state 40
+	tipoRetorno : ':' tipo .  (17)
+
+	.  reduce 17
+
+
+state 41
+	definicionFuncion : ID '(' parametros ')' tipoRetorno '{' . definicionVariables listaSentencia '}'  (23)
+	definicionVariables : .  (8)
+
+	VAR  shift 5
+	RETURN  reduce 8
+	WHILE  reduce 8
+	IF  reduce 8
+	ID  reduce 8
+	PRINT  reduce 8
+	PRINTSP  reduce 8
+	PRINTLN  reduce 8
+	READ  reduce 8
+	CAST  reduce 8
+	LITCHAR  reduce 8
+	LITENT  reduce 8
+	LITREAL  reduce 8
+	'!'  reduce 8
+	'-'  reduce 8
+	'('  reduce 8
+	'}'  reduce 8
+
+	definicionVariable  goto 45
+	definicionVariables  goto 46
+	listaDefinicionVariables  goto 47
+
+
+state 42
+	camposStruct : ID ':' tipo . ';'  (22)
+
+	';'  shift 48
+	.  error
+
+
+state 43
+	definicionStruct : STRUCT ID '{' listaCamposStruct '}' ';' .  (19)
+
+	.  reduce 19
+
+
+state 44
+	tipo : '[' LITENT ']' . tipo  (16)
+
+	ID  shift 25
+	CHAR  shift 26
+	INT  shift 27
+	REAL  shift 28
+	'['  shift 29
+	.  error
+
+	tipo  goto 49
+
+
+state 45
+	listaDefinicionVariables : definicionVariable .  (9)
+
+	.  reduce 9
+
+
+state 46
+	definicionFuncion : ID '(' parametros ')' tipoRetorno '{' definicionVariables . listaSentencia '}'  (23)
+	listaSentencia : .  (29)
+
+	.  reduce 29
+
+	listaSentencia  goto 50
+
+
+state 47
+	definicionVariables : listaDefinicionVariables .  (7)
+	listaDefinicionVariables : listaDefinicionVariables . definicionVariable  (10)
+
+	VAR  shift 5
+	RETURN  reduce 7
+	WHILE  reduce 7
+	IF  reduce 7
+	ID  reduce 7
+	PRINT  reduce 7
+	PRINTSP  reduce 7
+	PRINTLN  reduce 7
+	READ  reduce 7
+	CAST  reduce 7
+	LITCHAR  reduce 7
+	LITENT  reduce 7
+	LITREAL  reduce 7
+	'!'  reduce 7
+	'-'  reduce 7
+	'('  reduce 7
+	'}'  reduce 7
+
+	definicionVariable  goto 51
+
+
+state 48
+	camposStruct : ID ':' tipo ';' .  (22)
+
+	.  reduce 22
+
+
+state 49
+	tipo : '[' LITENT ']' tipo .  (16)
+
+	.  reduce 16
+
+
+state 50
+	definicionFuncion : ID '(' parametros ')' tipoRetorno '{' definicionVariables listaSentencia . '}'  (23)
+	listaSentencia : listaSentencia . sentencia  (30)
+
+	RETURN  shift 52
+	WHILE  shift 53
+	IF  shift 54
+	ID  shift 55
+	PRINT  shift 56
+	PRINTSP  shift 57
+	PRINTLN  shift 58
+	READ  shift 59
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	'}'  shift 67
+	.  error
+
+	sentencia  goto 68
+	exp  goto 69
+
+
+state 51
+	listaDefinicionVariables : listaDefinicionVariables definicionVariable .  (10)
+
+	.  reduce 10
+
+
+state 52
+	sentencia : RETURN . exp ';'  (37)
+	sentencia : RETURN . ';'  (38)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	';'  shift 71
+	.  error
+
+	exp  goto 72
+
+
+state 53
+	sentencia : WHILE . '(' exp ')' '{' listaSentencia '}'  (39)
+
+	'('  shift 73
+	.  error
+
+
+state 54
+	sentencia : IF . '(' exp ')' '{' listaSentencia '}'  (40)
+	sentencia : IF . '(' exp ')' '{' listaSentencia '}' ELSE '{' listaSentencia '}'  (41)
+
+	'('  shift 74
+	.  error
+
+
+state 55
+	sentencia : ID . '(' argumentos ')' ';'  (32)
+	exp : ID .  (57)
+	exp : ID . '(' argumentos ')'  (60)
+
+	'('  shift 75
+	AND  reduce 57
+	IGUALDAD  reduce 57
+	DESIGUALDAD  reduce 57
+	MENORIGUAL  reduce 57
+	MAYORIGUAL  reduce 57
+	OR  reduce 57
+	'>'  reduce 57
+	'<'  reduce 57
+	'+'  reduce 57
+	'-'  reduce 57
+	'*'  reduce 57
+	'/'  reduce 57
+	'%'  reduce 57
+	'['  reduce 57
+	'.'  reduce 57
+	'='  reduce 57
+
+
+state 56
+	sentencia : PRINT . exp ';'  (34)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 76
+
+
+state 57
+	sentencia : PRINTSP . exp ';'  (35)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 77
+
+
+state 58
+	sentencia : PRINTLN . exp ';'  (36)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 78
+
+
+state 59
+	sentencia : READ . exp ';'  (33)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 79
+
+
+state 60
+	exp : CAST . '<' tipo '>' '(' exp ')'  (47)
+
+	'<'  shift 80
+	.  error
+
+
+state 61
+	exp : LITCHAR .  (48)
+
+	.  reduce 48
+
+
+state 62
+	exp : LITENT .  (49)
+
+	.  reduce 49
+
+
+state 63
+	exp : LITREAL .  (50)
+
+	.  reduce 50
+
+
+state 64
+	exp : '!' . exp  (67)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 81
+
+
+state 65
+	exp : '-' . exp  (51)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 82
+
+
+state 66
+	exp : '(' . exp ')'  (46)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 83
+
+
+state 67
+	definicionFuncion : ID '(' parametros ')' tipoRetorno '{' definicionVariables listaSentencia '}' .  (23)
+
+	.  reduce 23
+
+
+state 68
+	listaSentencia : listaSentencia sentencia .  (30)
+
+	.  reduce 30
+
+
+state 69
+	sentencia : exp . '=' exp ';'  (31)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	'='  shift 99
+	.  error
+
+
+state 70
+	exp : ID .  (57)
+	exp : ID . '(' argumentos ')'  (60)
+
+	'('  shift 100
+	AND  reduce 57
+	IGUALDAD  reduce 57
+	DESIGUALDAD  reduce 57
+	MENORIGUAL  reduce 57
+	MAYORIGUAL  reduce 57
+	OR  reduce 57
+	'>'  reduce 57
+	'<'  reduce 57
+	'+'  reduce 57
+	'-'  reduce 57
+	'*'  reduce 57
+	'/'  reduce 57
+	'%'  reduce 57
+	'['  reduce 57
+	']'  reduce 57
+	'.'  reduce 57
+	')'  reduce 57
+	';'  reduce 57
+	','  reduce 57
+	'='  reduce 57
+
+
+state 71
+	sentencia : RETURN ';' .  (38)
+
+	.  reduce 38
+
+
+state 72
+	sentencia : RETURN exp . ';'  (37)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	';'  shift 101
+	.  error
+
+
+state 73
+	sentencia : WHILE '(' . exp ')' '{' listaSentencia '}'  (39)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 102
+
+
+state 74
+	sentencia : IF '(' . exp ')' '{' listaSentencia '}'  (40)
+	sentencia : IF '(' . exp ')' '{' listaSentencia '}' ELSE '{' listaSentencia '}'  (41)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 103
+
+
+state 75
+	sentencia : ID '(' . argumentos ')' ';'  (32)
+	exp : ID '(' . argumentos ')'  (60)
+	argumentos : .  (43)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	')'  reduce 43
+
+	exp  goto 104
+	argumentos  goto 105
+	listaExp  goto 106
+
+
+state 76
+	sentencia : PRINT exp . ';'  (34)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	';'  shift 107
+	.  error
+
+
+state 77
+	sentencia : PRINTSP exp . ';'  (35)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	';'  shift 108
+	.  error
+
+
+state 78
+	sentencia : PRINTLN exp . ';'  (36)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	';'  shift 109
+	.  error
+
+
+state 79
+	sentencia : READ exp . ';'  (33)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	';'  shift 110
+	.  error
+
+
+state 80
+	exp : CAST '<' . tipo '>' '(' exp ')'  (47)
+
+	ID  shift 25
+	CHAR  shift 26
+	INT  shift 27
+	REAL  shift 28
+	'['  shift 29
+	.  error
+
+	tipo  goto 111
+
+
+state 81
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : '!' exp .  (67)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 67
+	OR  reduce 67
+	']'  reduce 67
+	')'  reduce 67
+	';'  reduce 67
+	','  reduce 67
+	'='  reduce 67
+
+
+state 82
+	exp : '-' exp .  (51)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 51
+	IGUALDAD  reduce 51
+	DESIGUALDAD  reduce 51
+	MENORIGUAL  reduce 51
+	MAYORIGUAL  reduce 51
+	OR  reduce 51
+	'>'  reduce 51
+	'<'  reduce 51
+	'+'  reduce 51
+	'-'  reduce 51
+	'*'  reduce 51
+	'/'  reduce 51
+	'%'  reduce 51
+	']'  reduce 51
+	')'  reduce 51
+	';'  reduce 51
+	','  reduce 51
+	'='  reduce 51
+
+
+state 83
+	exp : '(' exp . ')'  (46)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	')'  shift 112
+	.  error
+
+
+state 84
+	exp : exp AND . exp  (68)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 113
+
+
+state 85
+	exp : exp IGUALDAD . exp  (66)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 114
+
+
+state 86
+	exp : exp DESIGUALDAD . exp  (65)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 115
+
+
+state 87
+	exp : exp MENORIGUAL . exp  (63)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 116
+
+
+state 88
+	exp : exp MAYORIGUAL . exp  (64)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 117
+
+
+state 89
+	exp : exp OR . exp  (69)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 118
+
+
+state 90
+	exp : exp '>' . exp  (62)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 119
+
+
+state 91
+	exp : exp '<' . exp  (61)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 120
+
+
+state 92
+	exp : exp '+' . exp  (52)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 121
+
+
+state 93
+	exp : exp '-' . exp  (53)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 122
+
+
+state 94
+	exp : exp '*' . exp  (54)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 123
+
+
+state 95
+	exp : exp '/' . exp  (55)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 124
+
+
+state 96
+	exp : exp '%' . exp  (56)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 125
+
+
+state 97
+	exp : exp '[' . exp ']'  (59)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 126
+
+
+state 98
+	exp : exp '.' . ID  (58)
+
+	ID  shift 127
+	.  error
+
+
+state 99
+	sentencia : exp '=' . exp ';'  (31)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 128
+
+
+state 100
+	exp : ID '(' . argumentos ')'  (60)
+	argumentos : .  (43)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	')'  reduce 43
+
+	exp  goto 104
+	argumentos  goto 129
+	listaExp  goto 106
+
+
+state 101
+	sentencia : RETURN exp ';' .  (37)
+
+	.  reduce 37
+
+
+state 102
+	sentencia : WHILE '(' exp . ')' '{' listaSentencia '}'  (39)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	')'  shift 130
+	.  error
+
+
+state 103
+	sentencia : IF '(' exp . ')' '{' listaSentencia '}'  (40)
+	sentencia : IF '(' exp . ')' '{' listaSentencia '}' ELSE '{' listaSentencia '}'  (41)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	')'  shift 131
+	.  error
+
+
+state 104
+	listaExp : exp .  (45)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	')'  reduce 45
+	','  reduce 45
+
+
+state 105
+	sentencia : ID '(' argumentos . ')' ';'  (32)
+	exp : ID '(' argumentos . ')'  (60)
+
+	')'  shift 132
+	.  error
+
+
+state 106
+	argumentos : listaExp .  (42)
+	listaExp : listaExp . ',' exp  (44)
+
+	','  shift 133
+	')'  reduce 42
+
+
+state 107
+	sentencia : PRINT exp ';' .  (34)
+
+	.  reduce 34
+
+
+state 108
+	sentencia : PRINTSP exp ';' .  (35)
+
+	.  reduce 35
+
+
+state 109
+	sentencia : PRINTLN exp ';' .  (36)
+
+	.  reduce 36
+
+
+state 110
+	sentencia : READ exp ';' .  (33)
+
+	.  reduce 33
+
+
+state 111
+	exp : CAST '<' tipo . '>' '(' exp ')'  (47)
+
+	'>'  shift 134
+	.  error
+
+
+state 112
+	exp : '(' exp ')' .  (46)
+
+	.  reduce 46
+
+
+state 113
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp AND exp .  (68)
+	exp : exp . OR exp  (69)
+
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 68
+	OR  reduce 68
+	']'  reduce 68
+	')'  reduce 68
+	';'  reduce 68
+	','  reduce 68
+	'='  reduce 68
+
+
+state 114
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp IGUALDAD exp .  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 66
+	IGUALDAD  reduce 66
+	DESIGUALDAD  reduce 66
+	MENORIGUAL  reduce 66
+	MAYORIGUAL  reduce 66
+	OR  reduce 66
+	'>'  reduce 66
+	'<'  reduce 66
+	']'  reduce 66
+	')'  reduce 66
+	';'  reduce 66
+	','  reduce 66
+	'='  reduce 66
+
+
+state 115
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp DESIGUALDAD exp .  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 65
+	IGUALDAD  reduce 65
+	DESIGUALDAD  reduce 65
+	MENORIGUAL  reduce 65
+	MAYORIGUAL  reduce 65
+	OR  reduce 65
+	'>'  reduce 65
+	'<'  reduce 65
+	']'  reduce 65
+	')'  reduce 65
+	';'  reduce 65
+	','  reduce 65
+	'='  reduce 65
+
+
+state 116
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp MENORIGUAL exp .  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 63
+	IGUALDAD  reduce 63
+	DESIGUALDAD  reduce 63
+	MENORIGUAL  reduce 63
+	MAYORIGUAL  reduce 63
+	OR  reduce 63
+	'>'  reduce 63
+	'<'  reduce 63
+	']'  reduce 63
+	')'  reduce 63
+	';'  reduce 63
+	','  reduce 63
+	'='  reduce 63
+
+
+state 117
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp MAYORIGUAL exp .  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 64
+	IGUALDAD  reduce 64
+	DESIGUALDAD  reduce 64
+	MENORIGUAL  reduce 64
+	MAYORIGUAL  reduce 64
+	OR  reduce 64
+	'>'  reduce 64
+	'<'  reduce 64
+	']'  reduce 64
+	')'  reduce 64
+	';'  reduce 64
+	','  reduce 64
+	'='  reduce 64
+
+
+state 118
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+	exp : exp OR exp .  (69)
+
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 69
+	OR  reduce 69
+	']'  reduce 69
+	')'  reduce 69
+	';'  reduce 69
+	','  reduce 69
+	'='  reduce 69
+
+
+state 119
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp '>' exp .  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 62
+	IGUALDAD  reduce 62
+	DESIGUALDAD  reduce 62
+	MENORIGUAL  reduce 62
+	MAYORIGUAL  reduce 62
+	OR  reduce 62
+	'>'  reduce 62
+	'<'  reduce 62
+	']'  reduce 62
+	')'  reduce 62
+	';'  reduce 62
+	','  reduce 62
+	'='  reduce 62
+
+
+state 120
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp '<' exp .  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 61
+	IGUALDAD  reduce 61
+	DESIGUALDAD  reduce 61
+	MENORIGUAL  reduce 61
+	MAYORIGUAL  reduce 61
+	OR  reduce 61
+	'>'  reduce 61
+	'<'  reduce 61
+	']'  reduce 61
+	')'  reduce 61
+	';'  reduce 61
+	','  reduce 61
+	'='  reduce 61
+
+
+state 121
+	exp : exp . '+' exp  (52)
+	exp : exp '+' exp .  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 52
+	IGUALDAD  reduce 52
+	DESIGUALDAD  reduce 52
+	MENORIGUAL  reduce 52
+	MAYORIGUAL  reduce 52
+	OR  reduce 52
+	'>'  reduce 52
+	'<'  reduce 52
+	'+'  reduce 52
+	'-'  reduce 52
+	']'  reduce 52
+	')'  reduce 52
+	';'  reduce 52
+	','  reduce 52
+	'='  reduce 52
+
+
+state 122
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp '-' exp .  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 53
+	IGUALDAD  reduce 53
+	DESIGUALDAD  reduce 53
+	MENORIGUAL  reduce 53
+	MAYORIGUAL  reduce 53
+	OR  reduce 53
+	'>'  reduce 53
+	'<'  reduce 53
+	'+'  reduce 53
+	'-'  reduce 53
+	']'  reduce 53
+	')'  reduce 53
+	';'  reduce 53
+	','  reduce 53
+	'='  reduce 53
+
+
+state 123
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp '*' exp .  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 54
+	IGUALDAD  reduce 54
+	DESIGUALDAD  reduce 54
+	MENORIGUAL  reduce 54
+	MAYORIGUAL  reduce 54
+	OR  reduce 54
+	'>'  reduce 54
+	'<'  reduce 54
+	'+'  reduce 54
+	'-'  reduce 54
+	'*'  reduce 54
+	'/'  reduce 54
+	'%'  reduce 54
+	']'  reduce 54
+	')'  reduce 54
+	';'  reduce 54
+	','  reduce 54
+	'='  reduce 54
+
+
+state 124
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp '/' exp .  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 55
+	IGUALDAD  reduce 55
+	DESIGUALDAD  reduce 55
+	MENORIGUAL  reduce 55
+	MAYORIGUAL  reduce 55
+	OR  reduce 55
+	'>'  reduce 55
+	'<'  reduce 55
+	'+'  reduce 55
+	'-'  reduce 55
+	'*'  reduce 55
+	'/'  reduce 55
+	'%'  reduce 55
+	']'  reduce 55
+	')'  reduce 55
+	';'  reduce 55
+	','  reduce 55
+	'='  reduce 55
+
+
+state 125
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp '%' exp .  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	'['  shift 97
+	'.'  shift 98
+	AND  reduce 56
+	IGUALDAD  reduce 56
+	DESIGUALDAD  reduce 56
+	MENORIGUAL  reduce 56
+	MAYORIGUAL  reduce 56
+	OR  reduce 56
+	'>'  reduce 56
+	'<'  reduce 56
+	'+'  reduce 56
+	'-'  reduce 56
+	'*'  reduce 56
+	'/'  reduce 56
+	'%'  reduce 56
+	']'  reduce 56
+	')'  reduce 56
+	';'  reduce 56
+	','  reduce 56
+	'='  reduce 56
+
+
+state 126
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp '[' exp . ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	']'  shift 135
+	'.'  shift 98
+	.  error
+
+
+state 127
+	exp : exp '.' ID .  (58)
+
+	.  reduce 58
+
+
+state 128
+	sentencia : exp '=' exp . ';'  (31)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	';'  shift 136
+	.  error
+
+
+state 129
+	exp : ID '(' argumentos . ')'  (60)
+
+	')'  shift 137
+	.  error
+
+
+state 130
+	sentencia : WHILE '(' exp ')' . '{' listaSentencia '}'  (39)
+
+	'{'  shift 138
+	.  error
+
+
+state 131
+	sentencia : IF '(' exp ')' . '{' listaSentencia '}'  (40)
+	sentencia : IF '(' exp ')' . '{' listaSentencia '}' ELSE '{' listaSentencia '}'  (41)
+
+	'{'  shift 139
+	.  error
+
+
+state 132
+	sentencia : ID '(' argumentos ')' . ';'  (32)
+	exp : ID '(' argumentos ')' .  (60)
+
+	';'  shift 140
+	AND  reduce 60
+	IGUALDAD  reduce 60
+	DESIGUALDAD  reduce 60
+	MENORIGUAL  reduce 60
+	MAYORIGUAL  reduce 60
+	OR  reduce 60
+	'>'  reduce 60
+	'<'  reduce 60
+	'+'  reduce 60
+	'-'  reduce 60
+	'*'  reduce 60
+	'/'  reduce 60
+	'%'  reduce 60
+	'['  reduce 60
+	'.'  reduce 60
+	'='  reduce 60
+
+
+state 133
+	listaExp : listaExp ',' . exp  (44)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 141
+
+
+state 134
+	exp : CAST '<' tipo '>' . '(' exp ')'  (47)
+
+	'('  shift 142
+	.  error
+
+
+state 135
+	exp : exp '[' exp ']' .  (59)
+
+	.  reduce 59
+
+
+state 136
+	sentencia : exp '=' exp ';' .  (31)
+
+	.  reduce 31
+
+
+state 137
+	exp : ID '(' argumentos ')' .  (60)
+
+	.  reduce 60
+
+
+state 138
+	sentencia : WHILE '(' exp ')' '{' . listaSentencia '}'  (39)
+	listaSentencia : .  (29)
+
+	.  reduce 29
+
+	listaSentencia  goto 143
+
+
+state 139
+	sentencia : IF '(' exp ')' '{' . listaSentencia '}'  (40)
+	sentencia : IF '(' exp ')' '{' . listaSentencia '}' ELSE '{' listaSentencia '}'  (41)
+	listaSentencia : .  (29)
+
+	.  reduce 29
+
+	listaSentencia  goto 144
+
+
+state 140
+	sentencia : ID '(' argumentos ')' ';' .  (32)
+
+	.  reduce 32
+
+
+state 141
+	listaExp : listaExp ',' exp .  (44)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	')'  reduce 44
+	','  reduce 44
+
+
+state 142
+	exp : CAST '<' tipo '>' '(' . exp ')'  (47)
+
+	ID  shift 70
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	.  error
+
+	exp  goto 145
+
+
+state 143
+	listaSentencia : listaSentencia . sentencia  (30)
+	sentencia : WHILE '(' exp ')' '{' listaSentencia . '}'  (39)
+
+	RETURN  shift 52
+	WHILE  shift 53
+	IF  shift 54
+	ID  shift 55
+	PRINT  shift 56
+	PRINTSP  shift 57
+	PRINTLN  shift 58
+	READ  shift 59
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	'}'  shift 146
+	.  error
+
+	sentencia  goto 68
+	exp  goto 69
+
+
+state 144
+	listaSentencia : listaSentencia . sentencia  (30)
+	sentencia : IF '(' exp ')' '{' listaSentencia . '}'  (40)
+	sentencia : IF '(' exp ')' '{' listaSentencia . '}' ELSE '{' listaSentencia '}'  (41)
+
+	RETURN  shift 52
+	WHILE  shift 53
+	IF  shift 54
+	ID  shift 55
+	PRINT  shift 56
+	PRINTSP  shift 57
+	PRINTLN  shift 58
+	READ  shift 59
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	'}'  shift 147
+	.  error
+
+	sentencia  goto 68
+	exp  goto 69
+
+
+state 145
+	exp : CAST '<' tipo '>' '(' exp . ')'  (47)
+	exp : exp . '+' exp  (52)
+	exp : exp . '-' exp  (53)
+	exp : exp . '*' exp  (54)
+	exp : exp . '/' exp  (55)
+	exp : exp . '%' exp  (56)
+	exp : exp . '.' ID  (58)
+	exp : exp . '[' exp ']'  (59)
+	exp : exp . '<' exp  (61)
+	exp : exp . '>' exp  (62)
+	exp : exp . MENORIGUAL exp  (63)
+	exp : exp . MAYORIGUAL exp  (64)
+	exp : exp . DESIGUALDAD exp  (65)
+	exp : exp . IGUALDAD exp  (66)
+	exp : exp . AND exp  (68)
+	exp : exp . OR exp  (69)
+
+	AND  shift 84
+	IGUALDAD  shift 85
+	DESIGUALDAD  shift 86
+	MENORIGUAL  shift 87
+	MAYORIGUAL  shift 88
+	OR  shift 89
+	'>'  shift 90
+	'<'  shift 91
+	'+'  shift 92
+	'-'  shift 93
+	'*'  shift 94
+	'/'  shift 95
+	'%'  shift 96
+	'['  shift 97
+	'.'  shift 98
+	')'  shift 148
+	.  error
+
+
+state 146
+	sentencia : WHILE '(' exp ')' '{' listaSentencia '}' .  (39)
+
+	.  reduce 39
+
+
+state 147
+	sentencia : IF '(' exp ')' '{' listaSentencia '}' .  (40)
+	sentencia : IF '(' exp ')' '{' listaSentencia '}' . ELSE '{' listaSentencia '}'  (41)
+
+	ELSE  shift 149
+	RETURN  reduce 40
+	WHILE  reduce 40
+	IF  reduce 40
+	ID  reduce 40
+	PRINT  reduce 40
+	PRINTSP  reduce 40
+	PRINTLN  reduce 40
+	READ  reduce 40
+	CAST  reduce 40
+	LITCHAR  reduce 40
+	LITENT  reduce 40
+	LITREAL  reduce 40
+	'!'  reduce 40
+	'-'  reduce 40
+	'('  reduce 40
+	'}'  reduce 40
+
+
+state 148
+	exp : CAST '<' tipo '>' '(' exp ')' .  (47)
+
+	.  reduce 47
+
+
+state 149
+	sentencia : IF '(' exp ')' '{' listaSentencia '}' ELSE . '{' listaSentencia '}'  (41)
+
+	'{'  shift 150
+	.  error
+
+
+state 150
+	sentencia : IF '(' exp ')' '{' listaSentencia '}' ELSE '{' . listaSentencia '}'  (41)
+	listaSentencia : .  (29)
+
+	.  reduce 29
+
+	listaSentencia  goto 151
+
+
+state 151
+	listaSentencia : listaSentencia . sentencia  (30)
+	sentencia : IF '(' exp ')' '{' listaSentencia '}' ELSE '{' listaSentencia . '}'  (41)
+
+	RETURN  shift 52
+	WHILE  shift 53
+	IF  shift 54
+	ID  shift 55
+	PRINT  shift 56
+	PRINTSP  shift 57
+	PRINTLN  shift 58
+	READ  shift 59
+	CAST  shift 60
+	LITCHAR  shift 61
+	LITENT  shift 62
+	LITREAL  shift 63
+	'!'  shift 64
+	'-'  shift 65
+	'('  shift 66
+	'}'  shift 152
+	.  error
+
+	sentencia  goto 68
+	exp  goto 69
+
+
+state 152
+	sentencia : IF '(' exp ')' '{' listaSentencia '}' ELSE '{' listaSentencia '}' .  (41)
+
+	.  reduce 41
+
+
+47 terminals, 21 nonterminals
+70 grammar rules, 153 states

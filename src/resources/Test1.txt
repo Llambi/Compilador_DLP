@@ -1,0 +1,39 @@
+/*
+Test 1 para probar la Fase de Generación de Código
+
+COMPROBACION: Al ejecutarlo la salida debería ser:
+1
+4
+
+CONSEJO: No limitarse a comprobar el resultado de la ejecución. Se recomienda además abrir el 
+fichero generado usando el depurador GVM y comprobar sus instrucciones.
+
+Para facilitar esta tarea es de gran utilidad que el alumno haya generado directivas '#line' en el 
+fichero de salida.
+Para información sobre la función de dicha directiva se debe abrir con GVM el siguiente tutorial: 
+Tutorial\3 Uso básico del depurador\4 Fusión Alto Nivel.txt
+
+NOTA: Es posible que el alumno deba adaptar ligeramente la sintaxis del lenguaje si no coincide
+con la del lenguaje que le corresponde.
+*/
+
+var global:float;
+
+doble(valor:int):int {
+	return valor * 2;
+}
+
+main() {
+	var local:int;
+
+	global = 1.0;
+	local = 2;
+
+	if (global < 2.0) {
+		print 1;	
+	} else {
+		print local;
+	}
+
+	print doble(2);
+}

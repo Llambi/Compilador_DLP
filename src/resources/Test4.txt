@@ -1,0 +1,61 @@
+/*
+Test 1 para probar la Fase de Generación de Código
+
+COMPROBACION. Al ejecutar el programa deberá salir:
+743,2314
+
+CONSEJO: No limitarse a comprobar el resultado de la ejecución. Se recomienda además abrir el fichero generado usando el depurador GVM y comprobar sus instrucciones.
+
+Para facilitar esta tarea es de gran utilidad que el alumno haya generado directivas '#line' en el fichero de salida.
+Para información sobre la función de dicha directiva se debe abrir con GVM el siguiente tutorial: 
+Tutorial\3 Uso básico del depurador\4 Fusión Alto Nivel.txt
+
+NOTA: Es posible que el alumno deba adaptar ligeramente la sintaxis del lenguaje si no coincide
+con la del lenguaje que le corresponde.
+*/
+
+potencia(base:float, exponente:int):float {
+	var total:float;
+
+	if (exponente == 0) {
+		total = 1.0;
+	} else {
+		if (exponente < 0) {
+			total = 1.0 / potencia(base, 0 - exponente);
+		} else { 
+			total = base;
+			while (exponente > 1) {
+				total = total * base;
+				exponente = exponente - 1;
+			}
+		}
+	}
+	return total;
+}
+	
+letraHipoteca(capital:float, años:int, interes:float):float {
+	var mensual:float;
+
+	mensual = interes / 12.0;
+	return capital * mensual / (100.0 * (1.0 - potencia(1.0 + mensual/100.0, 0 - años * 12)));
+}
+
+main() {
+	var precioVivienda:float;
+	var añosHipoteca:int;
+	var interes:float;
+
+	precioVivienda = 200000.0;
+	añosHipoteca = 30;
+	interes = 2.04;	
+/*
+	read precioVivienda;
+	read añosHipoteca;
+	read interes;
+*/
+
+	print letraHipoteca(precioVivienda, añosHipoteca, interes);
+
+//	Con los datos anteriores deberían salir 743 euros de letra al mes
+
+}

@@ -1,0 +1,65 @@
+/*
+Test 3 para probar la Fase de Generación de Código
+
+COMPROBACION. Al ejecutar el programa deberá salir:
+A
+1.5
+1.49
+1.48
+
+CONSEJO: No limitarse a comprobar el resultado de la ejecución. Se recomienda además abrir el fichero generado usando el depurador GVM y comprobar sus instrucciones.
+
+Para facilitar esta tarea es de gran utilidad que el alumno haya generado directivas '#line' en el fichero de salida.
+Para información sobre la función de dicha directiva se debe abrir con GVM el siguiente tutorial: 
+Tutorial\3 Uso básico del depurador\4 Fusión Alto Nivel.txt
+
+NOTA: Es posible que el alumno deba adaptar ligeramente la sintaxis del lenguaje si no coincide
+con la del lenguaje que le corresponde.
+*/
+
+struct Piloto {
+	inicial:char;  
+	crono:[3]float;	// Tiempos en la Q1, Q2 y Q3
+};
+
+var F1: [3]Piloto;
+
+inicia(i:int, inicial:char, q1:float, q2:float, q3:float) {
+	F1[i].inicial = inicial;
+	F1[i].crono[0] = q1;
+	F1[i].crono[1] = q2;
+	F1[i].crono[2] = q3;
+}  
+
+imprimeElMejor() {
+	var mejorPiloto:int;
+	var menorCrono:float;
+	var ultimaCrono:float;
+	var i:int;
+	
+	menorCrono = 1000.0;
+	i = 0;
+	while (i < 3) {
+		ultimaCrono = F1[i].crono[2];
+		if (ultimaCrono < menorCrono) {	// Solo importa la Q3
+			menorCrono = ultimaCrono; 
+			mejorPiloto = i;
+		}
+		i = i + 1;
+	}  
+
+	print F1[mejorPiloto].inicial;
+	i = 0;
+	while (i < 3) {
+		print F1[mejorPiloto].crono[i];
+		i = i + 1;
+	}  
+}
+
+main() {
+	inicia(0, 'A', 1.50, 1.49, 1.48);	// Alonso
+	inicia(1, 'H', 1.52, 1.51, 1.50);	// Hamilton
+	inicia(2, 'V', 1.54, 1.52, 1.51);	// Vettel
+
+	imprimeElMejor();	// Los ordenadores no se equivocan
+}

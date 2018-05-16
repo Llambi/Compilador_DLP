@@ -1,0 +1,37 @@
+/*
+Test para probar la Fase de Generación de Código
+
+COMPROBACION: Al ejecutarlo la salida debería ser la que indican los comentarios.
+
+CONSEJO: No limitarse a comprobar el resultado de la ejecución. Se recomienda además abrir el fichero generado usando el depurador GVM y comprobar sus instrucciones.
+Para facilitar esta tarea es de gran utilidad que el alumno haya generado directivas '#line' en el fichero de salida.
+Para información sobre la función de dicha directiva se debe abrir con GVM el siguiente tutorial: 
+Tutorial\3 Uso básico del depurador\4 Fusión Alto Nivel.txt
+
+NOTA: Es posible que el alumno deba cambiar ligeramente este ejemplo para que coincida con la sintaxis de la práctica del alumno.
+*/
+
+var a:int;
+var b:float;
+
+struct Punto {
+	x:float;
+	y:float;
+};
+
+var v:[5]int;
+var p:Punto;
+
+main() {
+	a = 1111;
+	b = 2222.2;
+	v[3] = 3333;
+	p.y = 4444.4;
+		
+	print a;		// 1111
+	print b + p.y;	// 6666.6
+	print v[3];		// 3333
+
+	print a > 0 && b < 3333.3;	// 1
+	print cast<int>(b);			// 2222
+}
